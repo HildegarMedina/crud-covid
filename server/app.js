@@ -1,10 +1,9 @@
 const morgan = require("morgan");
 const express = require("express");
-const mongoose = require("mongoose");
 
 const app = express();
 
-const userRouters = require("./routes/pacientes");
+const pacientesRouters = require("./routes/pacientes");
 
 //Database
 require("./database");
@@ -17,7 +16,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 //Routes
-//app.use(userRouters);
+app.use(pacientesRouters);
 
 //Run server
 app.listen(app.get("port"), () => {
