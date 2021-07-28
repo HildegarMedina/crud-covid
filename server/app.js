@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-const userRouters = require("./routes/users");
+const userRouters = require("./routes/pacientes");
 
 //Database
 require("./database");
