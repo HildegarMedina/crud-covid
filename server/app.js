@@ -1,19 +1,12 @@
 const morgan = require("morgan");
 const express = require("express");
-const mongoose = require("mongoose");
 
 const app = express();
 
-const userRouters = require("./routes/users");
+const pacientesRouters = require("./routes/pacientes");
 
-mongoose.connect("mongodb://localhost/crud-covid", {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true
-})
-.then(db => console.log("DB is connected"))
-.catch(err => console.log(err));
+//Database
+require("./database");
 
 //Settings
 app.set("port", process.env.PORT || 8000);
@@ -23,7 +16,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 //Routes
-//app.use(userRouters);
+app.use(pacientesRouters);
 
 //Run server
 app.listen(app.get("port"), () => {
