@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+    echo "Usage:"
+    echo
+    echo -e "\033[1;32m  $0 client \033[0m       - run client    (Vue.js)"
+    echo -e "\033[1;32m  $0 server \033[0m       - run server    (Node)"
+    echo
+    exit 0
+fi
+
+cd $(dirname $0)
+
+if [ "$1" == "client" ] || [ "$1" == "client/" ]; then
+    cd client
+    npm run dev
+fi
+
+if [ "$1" == "build" ]; then
+    cd client
+    npm run build && npm run generate
+fi
+
+if [ "$1" == "server" ] || [ "$1" == "server/" ];then
+    cd server
+    node app.js
+fi
