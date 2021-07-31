@@ -25,7 +25,7 @@
                                 <td>{{item.teste ? 'Positivo': "Negativo"}}</td>
                                 <td>
                                     <button class="btn btn-sm btn-primary" v-on:click="modificar(item._id, item.nome, item.idade, item.teste)">Modificar</button>
-                                    <button class="btn btn-sm btn-danger">Excluir</button>
+                                    <button class="btn btn-sm btn-danger" v-on:click="deletePatient(item._id)">Excluir</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -141,6 +141,23 @@ export default {
             }
 
             //Editar
+        },
+        async deletePatient(id) {
+            if(confirm("Deseja excluir o paciente?")) {
+                const response = await fetch(
+                    'http://localhost:8000/api/pacientes/excluir/'+id ,
+                    {method: 'DELETE'}
+                );
+                const content = await response.json();
+                if(content.result) {
+                    this.success = "Paciente excluido com éxito"
+                    this.resetForm();
+                    setTimeout(()=> {
+                        this.success = false
+                    }, 4000);
+                    this.updatePatients();
+                }
+            }
         },
         async updatePatients() {
             this.patients = await fetch(
