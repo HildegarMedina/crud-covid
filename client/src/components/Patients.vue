@@ -7,7 +7,7 @@
                 <div class="card p-4 shadow">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="text-center mb-3">Pacientes</h2>
-                        <button class="btn btn-success">Adicionar</button>
+                        <button class="btn btn-success" v-on:click="changeType('Adicionar')">Adicionar</button>
                     </div>
                     <table class="table table-bordered border-primary-custom table-striped mb-0">
                         <thead class="bg-primary-custom text-white">
@@ -24,7 +24,7 @@
                                 <td>22</td>
                                 <td>Positivo</td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary">Editar</button>
+                                    <button class="btn btn-sm btn-primary" v-on:click="changeType('Modificar')">Modificar</button>
                                     <button class="btn btn-sm btn-danger">Excluir</button>
                                 </td>
                             </tr>
@@ -33,11 +33,13 @@
                 </div>
             </div>
 
-            <!-- ADICIONAR OU EDITAR -->
+            <!-- ADICIONAR OU MODIFICAR -->
             <div class="col-md-5">
                 <div class="card p-4 shadow">
                     <form>
-                        <h2>Adicionar paciente</h2>
+
+                        <h2 v-if="type=='Adicionar'">Adicionar paciente</h2>
+                        <h2 v-if="type=='Modificar'">Modificar paciente</h2>
 
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome completo</label>
@@ -57,7 +59,8 @@
                             </select>
                         </div>
 
-                        <button class="btn btn-success btn-block text-center w-100">Adicionar</button>
+                        <button class="btn btn-success btn-block text-center w-100" v-if="type=='Adicionar'">Adicionar</button>
+                        <button class="btn btn-primary btn-block text-center w-100" v-if="type=='Modificar'">Modificar</button>
                         
                     </form>
                 </div>
@@ -67,7 +70,29 @@
 </template>
 <script>
 export default {
-
+    data(){
+        return {
+            type: "Adicionar",
+            form: {
+                nome: "",
+                idade: "",
+                teste: ""
+            }
+        }
+    },
+    methods: {
+        resetForm() {
+            this.form = {
+                nome: "",
+                idade: "",
+                teste: ""
+            }
+        },
+        changeType(newType) {
+            this.type = newType;
+            resetForm();
+        },
+    }
 }
 </script>
 <style scoped>
