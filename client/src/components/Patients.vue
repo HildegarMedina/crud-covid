@@ -36,24 +36,31 @@
             <!-- ADICIONAR OU MODIFICAR -->
             <div class="col-md-5">
                 <div class="card p-4 shadow">
-                    <form>
+                    <form @submit.prevent="sendForm">
+                        <div class="alert alert-danger" v-if="error">
+                            {{error}}
+                        </div>
 
+                        <div class="alert alert-success" v-if="success">
+                            {{success}}
+                        </div>
+                        
                         <h2 v-if="type=='Adicionar'">Adicionar paciente</h2>
                         <h2 v-if="type=='Modificar'">Modificar paciente</h2>
 
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome completo</label>
-                            <input type="text" class="form-control" id="nome" v-model="form.nome">
+                            <input type="text" class="form-control" id="nome" v-model="form.nome" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="idade" class="form-label">Idade</label>
-                            <input type="number" class="form-control" id="idade" min="1" max="120" v-model="form.idade">
+                            <input type="number" class="form-control" id="idade" min="1" max="120" v-model="form.idade" required>
                         </div>
 
                         <div class="mb-3">
                             <label for="teste" class="form-label">Teste</label>
-                            <select name="teste" id="teste" class="form-control" v-model="form.teste">
+                            <select name="teste" id="teste" class="form-control" v-model="form.teste" required>
                                 <option value="false">Negativo</option>
                                 <option value="true">Positivo</option>
                             </select>
@@ -73,11 +80,13 @@ export default {
     data(){
         return {
             type: "Adicionar",
+            error: false,
+            success: false,
             patients: [],
             form: {
                 id: null,
                 nome: "",
-                idade: "",
+                idade: 0,
                 teste: false
             }
         }
@@ -87,7 +96,7 @@ export default {
             this.form = {
                 id: null,
                 nome: "",
-                idade: "",
+                idade: 0,
                 teste: 0
             }
         },
@@ -104,13 +113,45 @@ export default {
                 teste: teste
             }
         },
+        async sendForm() {
+
+            //Adicionar
+            if (this.type == "Adicionar") {
+                const response = await fetch('http://localhost:8000/api/pacientes/novo', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.form)
+                });
+                const content = await response.json();
+                if (!content._id) {
+                    this.error = content.result;
+                    setTimeout(()=> {
+                        this.error = false
+                    }, 4000);
+                }else {
+                    this.success = "Paciente adicionado com éxito"
+                    this.resetForm();
+                    setTimeout(()=> {
+                        this.success = false
+                    }, 4000);
+                }
+            }
+
+            //Editar
+        },
+        async updatePatients() {
+            this.patients = await fetch(
+                'http://localhost:8000/api/pacientes'
+                ).then(res => res.json());
+        }
     },
     async mounted() {
 
         //Get data
-        this.patients = await fetch(
-        'http://localhost:8000/api/pacientes'
-        ).then(res => res.json());
+        this.updatePatients();
  
     }
 }
