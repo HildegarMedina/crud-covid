@@ -3,7 +3,7 @@
         <div class="row my-4">
 
             <!-- VER PECIENTES -->
-            <div class="col-md-7">
+            <div class="col-md-7 mb-3">
                 <div class="card p-4 shadow">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="text-center mb-3">Pacientes</h2>
@@ -34,7 +34,7 @@
             </div>
 
             <!-- ADICIONAR OU MODIFICAR -->
-            <div class="col-md-5">
+            <div class="col-md-5 mb-3">
                 <div class="card p-4 shadow">
                     <form @submit.prevent="sendForm">
                         <div class="alert alert-danger" v-if="error">
@@ -137,10 +137,37 @@ export default {
                     setTimeout(()=> {
                         this.success = false
                     }, 4000);
+                    this.updatePatients();
                 }
             }
 
-            //Editar
+            //Modificar
+            if (this.type == "Modificar") {
+                const response = await fetch('http://localhost:8000/api/pacientes/'+this.form.id, {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.form)
+                });
+                const content = await response.json();
+                if (!content.result) {
+                    this.error = content.result;
+                    setTimeout(()=> {
+                        this.error = false
+                    }, 4000);
+                }else {
+                    this.success = "Paciente modificado com éxito"
+                    this.resetForm();
+                    setTimeout(()=> {
+                        this.success = false
+                    }, 4000);
+                    this.updatePatients();
+                    this.type = "Adicionar";
+                }
+            }
+
         },
         async deletePatient(id) {
             if(confirm("Deseja excluir o paciente?")) {
