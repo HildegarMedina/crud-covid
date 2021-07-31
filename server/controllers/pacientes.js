@@ -4,17 +4,14 @@ module.exports = {
 
     index: async (req, res, next) => {
         const pacientes = await Paciente.find({});
-        res.status(200).json(pacientes);
+        res.json(pacientes);
     },
 
     novoPaciente: async (req, res, next) => {
-        const novoPaciente = new Paciente(req.body);
-        const paciente = await novoPaciente.save()
-        .then(res => {
-            res.status(200).json(paciente);
-        }).catch(err => {
-            res.status(200).json({result: "precisa preencher tudos os dados"});
-        })
+        const paciente = new Paciente(req.body);
+        await paciente.save()
+            .then(usr => res.json(usr))
+            .catch(err => res.json({result: "Precisa preencher tudos os dados"}));
     },
 
     modificarPaciente: async (req, res, next) => {
@@ -22,9 +19,9 @@ module.exports = {
         const novoPaciente = req.body;
         await Paciente.findByIdAndUpdate(_id=id, novoPaciente)
         .then(res => {
-            res.status(200).json({result: true});
+            res.json({result: true});
         }).catch(err => {
-            res.status(200).json({result: err});
+            res.json({result: err});
         });
     },
 
@@ -32,9 +29,9 @@ module.exports = {
         const { id } = req.params;
         await Paciente.findByIdAndRemove(id, function (err, docs) {
             if (err){
-                res.status(200).json({result: "ID Inválido"});
+                res.json({result: "ID Inválido"});
             }else{
-                res.status(200).json({result: true});
+                res.json({result: true});
             }
         });
     },
