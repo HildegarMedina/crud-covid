@@ -19,12 +19,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(item, index) in [0,1,2,3,5,6,7,8]" :key="index">
-                                <td>Nome Completo</td>
-                                <td>22</td>
-                                <td>Positivo</td>
+                            <tr v-for="(item, index) in patients" :key="index">
+                                <td>{{item.nome}}</td>
+                                <td>{{item.idade}}</td>
+                                <td>{{item.teste ? 'Positivo': "Negativo"}}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary" v-on:click="changeType('Modificar')">Modificar</button>
+                                    <button class="btn btn-sm btn-primary" v-on:click="modificar(item._id, item.nome, item.idade, item.teste)">Modificar</button>
                                     <button class="btn btn-sm btn-danger">Excluir</button>
                                 </td>
                             </tr>
@@ -43,19 +43,19 @@
 
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome completo</label>
-                            <input type="text" class="form-control" id="nome" placeholder="">
+                            <input type="text" class="form-control" id="nome" v-model="form.nome">
                         </div>
 
                         <div class="mb-3">
                             <label for="idade" class="form-label">Idade</label>
-                            <input type="number" class="form-control" id="idade" min="1" max="120" placeholder="">
+                            <input type="number" class="form-control" id="idade" min="1" max="120" v-model="form.idade">
                         </div>
 
                         <div class="mb-3">
                             <label for="teste" class="form-label">Teste</label>
-                            <select name="teste" id="teste" class="form-control">
-                                <option value="0">Negativo</option>
-                                <option value="1">Positivo</option>
+                            <select name="teste" id="teste" class="form-control" v-model="form.teste">
+                                <option value="false">Negativo</option>
+                                <option value="true">Positivo</option>
                             </select>
                         </div>
 
@@ -73,25 +73,45 @@ export default {
     data(){
         return {
             type: "Adicionar",
+            patients: [],
             form: {
+                id: null,
                 nome: "",
                 idade: "",
-                teste: ""
+                teste: false
             }
         }
     },
     methods: {
         resetForm() {
             this.form = {
+                id: null,
                 nome: "",
                 idade: "",
-                teste: ""
+                teste: 0
             }
         },
         changeType(newType) {
             this.type = newType;
-            resetForm();
+            this.resetForm();
         },
+        modificar(id, nome, idade, teste) {
+            this.changeType('Modificar');
+            this.form = {
+                id: id,
+                nome: nome,
+                idade, idade,
+                teste: teste
+            }
+        },
+    },
+    async mounted() {
+
+        //Get data
+        this.patients = await fetch(
+        'http://localhost:8000/api/pacientes'
+        ).then(res => res.json());
+ 
     }
 }
 </script>
